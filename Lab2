@@ -1,0 +1,126 @@
+
+import math
+
+def Output_Volume(t, k, p, q, y):
+    for k in range(1, t):
+        y[k-1] = 10 + 0.05*(p + 2*q + 1)*k + 0.01*(p + q + 1)*k**2 + 0.02*(2*p + q + 1)*(-1)**k
+    
+    print("Месяц (t[k]):\t\t\t", end="")
+    for k in range(1, t+1):
+        print(f"|{k}\t", end="")
+    print("|")
+    
+    print("Объём выпуска (y[k]):\t\t", end="")
+    for k in range(1, t):
+        print(f"|{y[k-1]}\t", end="")
+    print("|\t|")
+
+def Linear_Trend(k, t, y):
+    a11 = 5
+    a12 = sum(range(1, t))
+    a21 = a12
+    a22 = sum(k**2 for k in range(1, t))
+    b1 = sum(y)
+    b2 = sum(y[k-1]*k for k in range(1, t))
+    
+    C11 = a12/a11
+    D11 = b1/a11
+    C12 = a22 - C11*a21
+    D12 = b2 - D11*a21
+    
+    D11 = round(D11*1000)/1000
+    D12 = round(D12*100)/100
+    
+    c2 = D12/C12
+    c1 = D11 - C11*c2
+    
+    print("\nЛинейный тренд:\t\t\t", end="")
+    for k in range(1, t+1):
+        print(f"|{c1 + c2*k}\t", end="")
+    print("|")
+    
+    print("Погреш. лин. тренда в точках:\t", end="")
+    for k in range(1, t):
+        print(f"|{round(abs(y[k-1] - (c1 + c2*k))/y[k-1]*10000)/10000}\t", end="")
+    print("|\t|")
+    
+    i = max(abs(y[k-1] - (c1 + c2*k))/y[k-1] for k in range(1, t))
+    print(f"Погреш. лин. тренда:\t\t|{round(i*10000)/10000}\t|")
+
+def Quadratic_Trend(k, t, y):
+    a11 = 5
+    a12 = sum(range(1, t))
+    a21 = a12
+    a13 = sum(k**2 for k in range(1, t))
+    a22 = a31 = a13
+    a23 = sum(k**3 for k in range(1, t))
+    a32 = a23
+    a33 = sum(k**4 for k in range(1, t))
+    b1 = sum(y)
+    b2 = sum(y[k-1]*k for k in range(1, t))
+    b3 = sum(y[k-1]*k**2 for k in range(1, t))
+    
+    matrix = [[a11, a12, a13, b1],
+              [a21, a22, a23, b2],
+              [a31, a32, a33, b3]]
+    
+    return matrix
+
+def solveGauss(matrix):
+    n = len(matrix)
+    augmentedMatrix = [row[:] for row in matrix]
+
+    # Приводим к треугольному виду
+    for i in range(n):
+        # Делим текущую строку на диагональный элемент
+        divisor = augmentedMatrix[i][i]
+        for j in range(i, n + 1):
+            augmentedMatrix[i][j] /= divisor
+        # Вычитаем текущую строку из всех следующих строк
+        for k in range(i + 1, n):
+            multiplier = augmentedMatrix[k][i]
+            for j in range(i, n + 1):
+                augmentedMatrix[k][j] -= multiplier * augmentedMatrix[i][j]
+
+    # Решаем систему обратным ходом
+    solution = [0] * n
+    for i in range(n - 1, -1, -1):
+        solution[i] = augmentedMatrix[i][n]
+        for j in range(i + 1, n):
+            solution[i] -= augmentedMatrix[i][j] * solution[j]
+
+    return solution
+
+def QUADRATIC_TREND(k, t, y, c1, c2, c3):
+    print("\nКвадратич��ый тренд:\t\t", end="")
+    for k in range(1, t+1):
+        print(f"|{c1 + c2*k + c3*k**2}\t", end="")
+    print("|")
+    
+    print("Погреш. кв. тренда в точках:\t", end="")
+    for k in range(1, t):
+        print(f"|{round(abs(y[k-1] - (c1 + c2*k + c3*k**2))/y[k-1]*10000)/10000}\t", end="")
+    print("|\t|")
+    
+    i = max(abs(y[k-1] - (c1 + c2*k + c3*k**2))/y[k-1] for k in range(1, t))
+    print(f"Погреш. кв. тренда:\t\t|{round(i*10000)/10000}\t|")
+
+def main():
+    t = 6
+    k, p, q = 0, 0, 0
+    y = [0] * (t-1)
+    
+    p, q = map(int, input("Введи p и q: ").split())
+    
+    Output_Volume(t, k, p, q, y)
+    Linear_Trend(k, t, y)
+    matrix = Quadratic_Trend(k, t, y)
+    solution = solveGauss(matrix)
+    c1 = round(solution[0]*1000)/1000
+    c2 = round(solution[1]*1000)/1000
+    c3 = round(solution[2]*1000)/1000
+    QUADRATIC_TREND(k, t, y, c1, c2, c3)
+
+if __name__ == "__main__":
+    main()
+
