@@ -67,7 +67,7 @@ def main():
             b[l] -= a[l][j] * b[j]
 
     print("\nРасчёт распределения токов в электрической цепи")
-    print("Тадевосян Г. А.")
+    print("Ляшенко И.Д.")
     print(f"p = {p}, q = {q}")
     for k in range(m):
         print(f"r[{k}] = {r[k]}")
