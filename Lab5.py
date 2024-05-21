@@ -1,5 +1,7 @@
 import math
 
+
+
 PI = 3.14
 g = 9.8
 
@@ -18,7 +20,7 @@ def main():
     v = t = x = 0
     Tau = 0.2  # Шаг по времени
 
-    print(f"\nk1 = {k1}\nk2 = {k2}\nm = {m} кг\nv_самолёта = {v_c} м/c\nv_колонны = {v_k} м/с\nH = {H} м\n")
+    print(f"\nk1 = {k1}\nk2 = {k2}\nm = {m} кг\nv_самолёта = {round(v_c, 2)} м/c\nv_колонны = {round(v_k, 2)} м/с\nH = {H} м\n")
 
     # Решение поставленной задачи
     print("t, с\tv, м/с\t\tx, м\t\ty, м\t\th, м")
@@ -32,13 +34,11 @@ def main():
         h = H - x
         t_previous = t
         t += Tau
-        print(f"{t}\t{round(v * 100) / 100}\t\t{round(x * 100) / 100}\t\t{v_c * t}\t\t{h}")
+        print(f"{round(t, 2)}\t{round(v, 2)}\t\t{round(x, 2)}\t\t{round(v_c * t, 2)}\t\t{round(h, 2)}")
 
     t_fall = t_previous - (h_previous / (h - h_previous)) * (t - t_previous)
     l = (v_c - v_k) * t_fall
-    print(f"\nВремя падения: {t_fall} с\nУпреждение: {l} м")
+    print(f"\nВремя падения: {round(t_fall, 2)} с\nУпреждение: {round(l, 2)} м")
 
 if __name__ == "__main__":
     main()
-
-
